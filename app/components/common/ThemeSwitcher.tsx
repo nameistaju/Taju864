@@ -5,7 +5,6 @@ import { usePortalStore, useThemeStore } from "@stores";
 import gsap from "gsap";
 import Image from 'next/image';
 import { useEffect, useRef, useState } from "react";
-import { isMobile } from "react-device-detect";
 
 const ThemeSwitcher = () => {
   const themeSwitcherRef = useRef<HTMLDivElement>(null);
@@ -13,6 +12,17 @@ const ThemeSwitcher = () => {
   const isActive = usePortalStore((state) => state.activePortalId);
   const [positionClass, setPositionClass] = useState<string>('');
   const toggleTheme = () => nextTheme();
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useGSAP(() => {
     gsap.to(themeSwitcherRef.current, {

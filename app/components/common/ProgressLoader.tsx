@@ -1,6 +1,5 @@
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
-import { isMobile } from 'react-device-detect';
 
 /**
  * Partially AI Generated
@@ -56,7 +55,8 @@ const ProgressLoader = ({ progress }: { progress: number }) => {
       return null; // Or return a minimal placeholder
   }
 
-  if (isMobile) {
+  const isMobileSize = windowSize.width < 768;
+  if (isMobileSize) {
     return (
       <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
         <div className="relative w-[100px] transition-all duration-500 font-sans font-bold"

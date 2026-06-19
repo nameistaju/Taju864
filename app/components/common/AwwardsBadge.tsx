@@ -5,7 +5,6 @@ import { useProgress } from '@react-three/drei';
 import { usePortalStore, useThemeStore } from '@stores';
 import gsap from 'gsap';
 import { useEffect, useRef, useState } from 'react';
-import { isMobile } from 'react-device-detect';
 
 const AwwardsBadge = () => {
   const badgeRef = useRef<HTMLDivElement>(null);
@@ -14,6 +13,17 @@ const AwwardsBadge = () => {
   const scrollProgress = useScrollStore((state) => state.scrollProgress);
   const color = useThemeStore((state) => state.theme.color);
   const { progress } = useProgress();
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [loaded, setLoaded] = useState(false);
   const [startAnimation, setStartAnimation] = useState(false);

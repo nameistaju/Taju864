@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     default: "Shaik Tajmahaboob Subhan",
     template: "%s | Taj Subhan",
   },
+  icons: {
+    icon: "/favicon.png",
+  },
   description:
     "UI/UX Designer & MERN Stack Developer specializing in user-focused design and scalable web applications.",
   keywords:

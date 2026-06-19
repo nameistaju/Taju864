@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { isMobile } from "react-device-detect";
+import { useThree } from "@react-three/fiber";
 import ProjectTile from "./ProjectTile";
 
 import { PROJECTS } from "@constants";
 import { usePortalStore } from "@stores";
 
 const ProjectsCarousel = () => {
+  const { size } = useThree();
+  const isMobile = size.width < 768;
   const [activeId, setActiveId] = useState<number | null>(null);
   const isActive = usePortalStore((state) => state.activePortalId === "projects");
 
@@ -41,7 +43,7 @@ const ProjectsCarousel = () => {
         />
       );
     });
-  }, [activeId, isActive]);
+  }, [activeId, isActive, isMobile]);
 
   return (
     <group rotation={[0, -Math.PI / 12, 0]}>

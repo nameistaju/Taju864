@@ -1,14 +1,15 @@
 import { Text, useScroll } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { usePortalStore } from "@stores";
 import { useRef } from "react";
-import { isMobile } from "react-device-detect";
 import * as THREE from 'three';
 import GridTile from "./GridTile";
 import Projects from "./projects";
 import Work from "./work";
 
 const Experience = () => {
+  const { size } = useThree();
+  const isMobile = size.width < 768;
   const titleRef = useRef<THREE.Group>(null);
   const groupRef = useRef<THREE.Group>(null);
   const data = useScroll();

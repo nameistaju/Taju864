@@ -5,7 +5,6 @@ import { AdaptiveDpr, Preload, ScrollControls, useProgress } from "@react-three/
 import { Canvas } from "@react-three/fiber";
 import gsap from "gsap";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { isMobile } from "react-device-detect";
 
 import { useThemeStore } from "@stores";
 
@@ -21,26 +20,31 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const backgroundColor = useThemeStore((state) => state.theme.color);
   const { progress } = useProgress();
-  const [canvasStyle, setCanvasStyle] = useState<React.CSSProperties>({
+  
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const canvasStyle: React.CSSProperties = {
     position: "absolute",
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    opacity: 0,
     overflow: "hidden",
-  });
-
-  useEffect(() => {
-    if (!isMobile) {
-      const borderStyle = {
-        inset: '1rem',
-        width: 'calc(100% - 2rem)',
-        height: 'calc(100% - 2rem)',
-      };
-      setCanvasStyle({ ...canvasStyle, ...borderStyle})
-    }
-  }, [isMobile]);
+    ...(isMobile ? {} : {
+      inset: '1rem',
+      width: 'calc(100% - 2rem)',
+      height: 'calc(100% - 2rem)',
+    })
+  };
 
   useGSAP(() => {
     if (progress === 100) {

@@ -2,13 +2,13 @@
 
 import { useScroll } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { isMobile } from "react-device-detect";
 import * as THREE from "three";
 
 import { usePortalStore, useScrollStore } from "@stores";
 
 const ScrollWrapper = (props: { children: React.ReactNode | React.ReactNode[]}) => {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
+  const isMobile = size.width < 768;
   const data = useScroll();
   const isActive = usePortalStore((state) => !!state.activePortalId);
   const setScrollProgress = useScrollStore((state) => state.setScrollProgress);
@@ -18,6 +18,18 @@ const ScrollWrapper = (props: { children: React.ReactNode | React.ReactNode[]}) 
       const a = data.range(0, 0.3);
       const b = data.range(0.3, 0.5);
       const d = data.range(0.85, 0.18);
+
+      const aspect = state.size.width / state.size.height;
+      const baseFov = 75;
+      let targetFov = baseFov;
+      if (aspect < 1.1) {
+        targetFov = baseFov * Math.max(1, Math.min(1.4, 1.05 / aspect));
+      }
+      if ('fov' in camera) {
+        const pCam = camera as THREE.PerspectiveCamera;
+        pCam.fov = THREE.MathUtils.damp(pCam.fov, targetFov, 10, delta);
+        pCam.updateProjectionMatrix();
+      }
 
       if (!isActive) {
         camera.rotation.x = THREE.MathUtils.damp(camera.rotation.x, -0.5 * Math.PI * a, 5, delta);

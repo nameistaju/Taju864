@@ -3,7 +3,6 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { usePortalStore } from "@stores";
 import gsap from "gsap";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { isMobile } from "react-device-detect";
 import * as THREE from "three";
 
 import { WORK_TIMELINE } from "@constants";
@@ -12,7 +11,7 @@ import { WorkTimelinePoint } from "@types";
 const reusableLeft = new THREE.Vector3(-0.3, 0, -0.1);
 const reusableRight = new THREE.Vector3(0.3, 0, -0.1);
 
-const TimelinePoint = ({ point, diff }: { point: WorkTimelinePoint, diff: number }) => {
+const TimelinePoint = ({ point, diff, isMobile }: { point: WorkTimelinePoint, diff: number, isMobile: boolean }) => {
   const getPoint = useMemo(() => {
     switch (point.position) {
       case 'left': return reusableLeft;
@@ -35,7 +34,7 @@ const TimelinePoint = ({ point, diff }: { point: WorkTimelinePoint, diff: number
     font: "./soria-font.ttf",
     fontSize: isMobile ? 0.4 : 0.5,
     maxWidth: isMobile ? 1.8 : 2.5,
-  }), [textProps]);
+  }), [textProps, isMobile]);
 
   return (
     <group position={point.point} scale={isMobile ? 0.35 : 0.6}>
@@ -63,7 +62,8 @@ const TimelinePoint = ({ point, diff }: { point: WorkTimelinePoint, diff: number
 };
 
 const Timeline = ({ progress }: { progress: number }) => {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
+  const isMobile = size.width < 768;
   const isActive = usePortalStore((state) => state.activePortalId === 'work');
   const timeline = useMemo(() => WORK_TIMELINE, []);
 
@@ -137,7 +137,7 @@ const Timeline = ({ progress }: { progress: number }) => {
       <group ref={groupRef}>
         {visibleTimelinePoints.map((point, i) => {
           const diff = Math.min(2 * Math.max(i - (progress * (timeline.length - 1)), 0), 1);
-          return <TimelinePoint point={point} key={i} diff={diff} />;
+          return <TimelinePoint point={point} key={i} diff={diff} isMobile={isMobile} />;
         })}
       </group>
     </group>

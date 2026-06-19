@@ -91,3 +91,7 @@ body {
 .close:after {
   transform: rotate(-45deg);
 }
+
+.base-canvas {
+  opacity: 0;
+}
